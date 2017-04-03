@@ -1,5 +1,7 @@
 # mongodb-query-parser [![travis][travis_img]][travis_url] [![npm][npm_img]][npm_url]
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mongodb-js/query-parser.svg)](https://greenkeeper.io/)
+
 > Parse MongoDB queries
 
 ## Example
