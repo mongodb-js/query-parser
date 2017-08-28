@@ -25,7 +25,7 @@
     "lodash": "^4.17.4",
     "lru-cache": "^4.1.1",
     "mongodb-extended-json": "^1.10.0",
-    "mongodb-language-model": "^1.1.0",
+    "mongodb-language-model": "^1.2.0",
     "ms": "^2.0.0"
   },
   "devDependencies": {
