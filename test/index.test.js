@@ -2,13 +2,14 @@ var parser = require('../');
 var assert = require('assert');
 var sinon = require('sinon');
 
-var EJSON = require('mongodb-extended-json');
-var bson = require('bson');
+const bson = require('bson');
+const EJSON = require('mongodb-extended-json');
+// const EJSON = require('bson').EJSON;
 var debug = require('debug')('mongodb-query-parser:test');
 
 function convert(string) {
   var res = parser.parseFilter(string);
-  var ret = EJSON.serialize(res);
+  var ret = JSON.parse(EJSON.stringify(res, { legacy: true }));
   debug('converted', { input: string, parsed: res, encoded: ret });
   return ret;
 }
@@ -70,17 +71,23 @@ describe('mongodb-query-parser', function() {
       });
 
       it('should support BinData', function() {
-        assert.deepEqual(convert('new BinData(2, "OyQRAeK7QlWMr0E2xWapYg==")'), {
-          $binary: 'OyQRAeK7QlWMr0E2xWapYg==',
-          $type: '2'
-        });
+        assert.deepEqual(
+          convert('new BinData(2, "OyQRAeK7QlWMr0E2xWapYg==")'),
+          {
+            $binary: 'OyQRAeK7QlWMr0E2xWapYg==',
+            $type: '2'
+          }
+        );
       });
 
       it('should support UUID', function() {
-        assert.deepEqual(convert('UUID("3b241101-e2bb-4255-8caf-4136c566a962")'), {
-          $binary: 'OyQRAeK7QlWMr0E2xWapYg==',
-          $type: '4'
-        });
+        assert.deepEqual(
+          convert('UUID("3b241101-e2bb-4255-8caf-4136c566a962")'),
+          {
+            $binary: 'OyQRAeK7QlWMr0E2xWapYg==',
+            $type: '4'
+          }
+        );
       });
 
       context('for Date() and ISODate() without argument', function() {
@@ -98,7 +105,7 @@ describe('mongodb-query-parser', function() {
         });
 
         it('should support Date', function() {
-          assert.deepEqual(convert('Date()'), {
+          assert.deepEqual(convert('{d: Date()}'), {
             $date: nowStr
           });
         });
@@ -123,14 +130,14 @@ describe('mongodb-query-parser', function() {
       });
 
       it('should support Timestamp', function() {
-        assert.deepEqual(convert('Timestamp(15, 31)'), {
-          $timestamp: { t: 15, i: 31 }
+        assert.deepEqual(convert('Timestamp(0, 0)'), {
+          $timestamp: { t: 0, i: 0 }
         });
       });
 
       it('should support new Timestamp', function() {
-        assert.deepEqual(convert('new Timestamp(15, 31)'), {
-          $timestamp: { t: 15, i: 31 }
+        assert.deepEqual(convert('new Timestamp(0, 0)'), {
+          $timestamp: { t: 0, i: 0 }
         });
       });
 
@@ -316,7 +323,9 @@ describe('mongodb-query-parser', function() {
     it('should parse valid project strings', function() {
       assert.deepEqual(parser.parseProject('{_id: 1}'), { _id: 1 });
       assert.deepEqual(parser.parseProject('{_id: -1}'), { _id: -1 });
-      assert.deepEqual(parser.parseProject('{comments: { $slice: -1 }}'), { comments: { $slice: -1 }});
+      assert.deepEqual(parser.parseProject('{comments: { $slice: -1 }}'), {
+        comments: { $slice: -1 }
+      });
     });
     it('should detect invalid project strings', function() {
       assert.equal(parser.isProjectValid('{_id: "a"}'), false);
@@ -332,9 +341,12 @@ describe('mongodb-query-parser', function() {
       assert.equal(parser.parseCollation('{}'), null);
     });
     it('should parse valid collation strings', function() {
-      assert.deepEqual(parser.parseCollation('{locale: "simple"}'), { locale: 'simple' });
+      assert.deepEqual(parser.parseCollation('{locale: "simple"}'), {
+        locale: 'simple'
+      });
       assert.deepEqual(
-        parser.parseCollation('{locale: "en_US", strength: 1}'), { locale: 'en_US', strength: 1 }
+        parser.parseCollation('{locale: "en_US", strength: 1}'),
+        { locale: 'en_US', strength: 1 }
       );
     });
     it('should detect invalid project strings', function() {
