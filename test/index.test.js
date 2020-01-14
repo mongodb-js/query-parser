@@ -106,7 +106,7 @@ describe('mongodb-query-parser', function() {
 
         it('should support Date', function() {
           assert.deepEqual(convert('{d: Date()}'), {
-            $date: nowStr
+            d: { $date: nowStr }
           });
         });
 
@@ -130,14 +130,14 @@ describe('mongodb-query-parser', function() {
       });
 
       it('should support Timestamp', function() {
-        assert.deepEqual(convert('Timestamp(0, 0)'), {
-          $timestamp: { t: 0, i: 0 }
+        assert.deepEqual(convert('{t: Timestamp(0, 0)}'), {
+          t: { $timestamp: {} }
         });
       });
 
       it('should support new Timestamp', function() {
-        assert.deepEqual(convert('new Timestamp(0, 0)'), {
-          $timestamp: { t: 0, i: 0 }
+        assert.deepEqual(convert('{t: new Timestamp(0, 0)}'), {
+          t: { $timestamp: {} }
         });
       });
 
