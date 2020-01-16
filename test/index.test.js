@@ -225,6 +225,14 @@ describe('mongodb-query-parser', function() {
       it('should support MaxKey', function() {
         assert.deepEqual(convert('MaxKey()'), { $maxKey: 1 });
       });
+
+      it('should support double', function() {
+        assert.deepEqual(convert('Double(13.5)'), 13.5);
+      });
+
+      it('should support Symbol', function() {
+        assert.deepEqual(convert('Symbol("symbol")'), 'symbol');
+      });
     });
   });
 
