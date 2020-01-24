@@ -46,6 +46,12 @@ parser.detect(queryAsJSON);
 // >>> `json`
 ```
 
+## Migrations
+
+We aim to not have any API breaking changes in this library as we consider it stable, but breakages may occur whenever we upgrade a core dependency or perform a major refactor.
+
+We have a [migration guide](MIGRATION.md) which covers what to look out for between releases.
+
 ## Related
 
 - [`mongodb-language-model`](https://github.com/mongodb-js/mongodb-language-model) Work with rich AST's of MongoDB queries
