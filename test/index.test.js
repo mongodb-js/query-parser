@@ -192,6 +192,12 @@ describe('mongodb-query-parser', function() {
         });
       });
 
+      it('should support NumberLong > MAX_SAFE_INTEGER', function() {
+        assert.deepEqual(convert('NumberLong("345678654321234552")'), {
+          $numberLong: '345678654321234552'
+        });
+      });
+
       it('should support new NumberLong', function() {
         assert.deepEqual(convert('new NumberLong("1234567890")'), {
           $numberLong: '1234567890'
