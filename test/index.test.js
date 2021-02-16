@@ -90,6 +90,36 @@ describe('mongodb-query-parser', function() {
         );
       });
 
+      it('should support functions', function() {
+        assert.deepEqual(convert('{$match: () => true}'), {
+          $match: '() => true'
+        });
+
+        assert.deepEqual(convert(
+          `{
+            $expr: {
+              $function: {
+                body: function(name) { return hex_md5(name) == "15b0a220baa16331e8d80e15367677ad"; },
+                args: [ "$name" ],
+                lang: "js"
+              }
+            }
+          }`
+        ), {
+          $expr: {
+            $function: {
+              body: 'function(name) { return hex_md5(name) == "15b0a220baa16331e8d80e15367677ad"; }',
+              args: [ '$name' ],
+              lang: 'js'
+            }
+          }
+        });
+
+        assert.deepEqual(convert('{$match: function() { return this.x === 2; }}'), {
+          $match: 'function() { return this.x === 2; }'
+        });
+      });
+
       context('for Date() and ISODate() without argument', function() {
         // mock a specific timestamp with sinon.useFakeTimers
         var now = 1533789516225;
