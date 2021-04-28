@@ -451,6 +451,10 @@ describe('mongodb-query-parser', function() {
       assert.equal(parser.isSortValid('[["foo", "bar"]]'), false);
       assert.equal(parser.isSortValid('[[123, -1]]'), false);
     });
+    it('should handle null and undefined', () => {
+      assert.equal(parser.isSortValid('null'), null);
+      assert.equal(parser.isSortValid('undefined'), null);
+    });
   });
 
   describe('skip', function() {
